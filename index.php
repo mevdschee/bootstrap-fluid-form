@@ -14,7 +14,7 @@ calculate($data);
 if ($data['submitted'] && !$data['errors']) {
 	$data['errors'] = validate_mandatory($data);
 	if (!$is_ajax && !$data['errors']) {
-		die("Sum: $data[sum], Total: $data[total]");
+		die(header('Location: saved.html'));
 	}
 }
 $data['submitted'] = 0;
@@ -70,7 +70,7 @@ function calculate(&$data)
         <div class="col-sm-5 col-sm-offset-4">
           <h3>Fluid Form</h3>
         </div>
-        <form class="form-horizontal" role="form" method="post">
+        <form class="form-horizontal" role="form" method="post" action="">
           <div class="form-group">
             <label for="field1" class="col-sm-4 control-label">* Number 1</label>
             <div class="col-sm-5">
