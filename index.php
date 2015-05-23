@@ -12,7 +12,7 @@ $data['errors'] = validate($data);
 calculate($data);
 
 if ($data['submitted'] && !$data['errors']) {
-	$data['errors'] = validate_mandatory($data);
+	$data['errors'] = validate_required($data);
 	if (!$is_ajax && !$data['errors']) {
 		die(header('Location: saved.html'));
 	}
@@ -38,7 +38,7 @@ function validate($data)
 	return array_filter($errors);
 }
 
-function validate_mandatory($data)
+function validate_required($data)
 {
 	$errors = array();
 	foreach ($data as $key=>$val) {
