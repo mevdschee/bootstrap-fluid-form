@@ -14,7 +14,7 @@ calculate($data);
 if ($data['submitted'] && !$data['errors']) {
 	$data['errors'] = validate_mandatory($data);
 	if (!$is_ajax && !$data['errors']) {
-		die("OK");
+		die("Sum: $data[sum], Total: $data[total]");
 	}
 }
 $data['submitted'] = 0;
@@ -30,7 +30,8 @@ function validate($data)
 		if (!empty($val)) {
 			switch ($key) {
 				case 'number1':
-				case 'number2': $errors[$key] = !is_numeric($val); break;
+				case 'number2':
+				case 'multiplier': $errors[$key] = !is_numeric($val); break;
 			}
 		}
 	}
@@ -52,6 +53,7 @@ function validate_mandatory($data)
 function calculate(&$data)
 {
 	$data['sum'] = $data['number1']+$data['number2'];
+	$data['total'] = $data['sum']*($data['multiplier']?:1);
 }
 ?>
 <html>
@@ -65,16 +67,18 @@ function calculate(&$data)
   <body>
     <div class="container">
       <div class="row">
-	<h3 style="text-align:center;">Fluid Form</h3>
+        <div class="col-sm-5 col-sm-offset-4">
+          <h3>Fluid Form</h3>
+        </div>
         <form class="form-horizontal" role="form" method="post">
           <div class="form-group">
-            <label for="field1" class="col-sm-4 control-label">Number 1</label>
+            <label for="field1" class="col-sm-4 control-label">* Number 1</label>
             <div class="col-sm-5">
               <input type="text" class="form-control" id="field1" name="number1" value="<?php echo htmlentities($data['number1']); ?>">
             </div>
           </div>
           <div class="form-group">
-            <label for="field2" class="col-sm-4 control-label">Number 2</label>
+            <label for="field2" class="col-sm-4 control-label">* Number 2</label>
             <div class="col-sm-5">
               <input type="text" class="form-control" id="field2" name="number2" value="<?php echo htmlentities($data['number2']); ?>">
             </div>
@@ -83,6 +87,18 @@ function calculate(&$data)
             <label for="field3" class="col-sm-4 control-label">Sum</label>
             <div class="col-sm-5">
               <pre><span id="sum"><?php echo htmlentities($data['sum']); ?></span>&nbsp;</pre>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="field4" class="col-sm-4 control-label">Multiplier</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" id="field4" name="multiplier" value="<?php echo htmlentities($data['multiplier']); ?>">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="field5" class="col-sm-4 control-label">Total</label>
+            <div class="col-sm-5">
+              <pre><span id="total"><?php echo htmlentities($data['total']); ?></span>&nbsp;</pre>
             </div>
           </div>
           <div class="form-group">
@@ -109,12 +125,13 @@ function showErrors(validation){
 
 showErrors(<?php echo json_encode($data['errors']);?>);
 
-$( ":input" ).on( "change", function( event ) {
+$( ":input" ).on( "change", update);
+
+function update() {
 	$.post('', $(document.forms[0]).serialize(), function( data ) {
 			delete data[$('input:focus').attr('name')];
 			$(document.forms[0]).populate(data,{resetForm:false});
 			if (data.errors) showErrors(data.errors);
 		}, "json");
-});
-
+}
 </script>
