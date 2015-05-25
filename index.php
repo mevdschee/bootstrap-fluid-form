@@ -6,7 +6,8 @@ if(!$is_ajax && $is_post) {
 	$_POST['submitted'] = 1;
 }
 
-$data = $_POST;
+$fields = array('number1','number2','sum','multiplier','total','submitted');
+foreach ($fields as $field) $data[$field] = isset($_POST[$field])?$_POST[$field]:'';
 
 $data['errors'] = validate($data);
 calculate($data);
